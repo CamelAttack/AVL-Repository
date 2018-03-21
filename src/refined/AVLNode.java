@@ -1,6 +1,6 @@
 package refined;
 
-public class AVLNode<NodeValue extends Comparable<NodeValue> & Cloneable> {
+public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	// ************************************** PRIVATE MEMBERS
 	// Height of the Node
 	int height;
@@ -106,6 +106,13 @@ public class AVLNode<NodeValue extends Comparable<NodeValue> & Cloneable> {
 		return this.nodeValue;
 	}
 
+	public boolean hasParent() {
+		if(this.parentNode != null) {
+			return true;
+		}
+		return false;
+	}
+	
 	//Returns true if this node has no children;
 	//Returns false if either the left or right child has a node;
 	public boolean isEmpty() {
@@ -135,7 +142,7 @@ public class AVLNode<NodeValue extends Comparable<NodeValue> & Cloneable> {
 	// Update this Node's Height with a Shallow Update
 	public void connectLeftChild(AVLNode<NodeValue> someNode) {
 		this.leftChild = someNode;
-		this.leftChild.setParentNode(someNode);
+		this.leftChild.setParentNode(this);
 		this.updateNodeHeightShallow();
 	}
 
@@ -237,6 +244,14 @@ public class AVLNode<NodeValue extends Comparable<NodeValue> & Cloneable> {
 		return builder.toString();
 	}
 
+	public void cleanNode() {
+		nodeValue = null;
+		parentNode = null;
+		leftChild = null;
+		rightChild = null;
+	}
+	
+	
 	// ***********************************PRIVATE Methods
 
 	// Returns a reference to the object contained by the parent of this node.
