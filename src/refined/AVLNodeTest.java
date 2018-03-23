@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import refined.AVLNode.LeafDirection;
+
 class AVLNodeTest {
 	private static Integer[] integerList = { new Integer(500), new Integer(750), new Integer(125), new Integer(350) };
 	private static AVLNode<Integer> firstNode;
@@ -65,6 +67,7 @@ class AVLNodeTest {
 		AVLNode<Integer> parentNode = childNode.getParentNode();
 		assertEquals(smallNode.getObject(), childNode.getObject(), "Left child did not attach to parent node");
 		assertEquals(parentNode.getObject(), firstNode.getObject(), "Parent did not attach to left child.");
+		assertEquals(childNode.getLeafDirection(), LeafDirection.LEFT);
 	}
 
 	@Test
@@ -74,30 +77,35 @@ class AVLNodeTest {
 		AVLNode<Integer> parentNode = childNode.getParentNode();
 		assertEquals(bigNode.getObject(), childNode.getObject(), "Right child did not attach to parent node.");
 		assertEquals(parentNode.getObject(), firstNode.getObject(), "Parent did not attach to right child.");
+		assertEquals(childNode.getLeafDirection(), LeafDirection.RIGHT);
 	}
 
 	@Test
 	void testDisconnectLeftChild() {
 		firstNode.connectLeftChild(smallNode);
 		firstNode.connectRightChild(bigNode);
-		firstNode.disconnectLeftChild();
+		AVLNode<Integer> disconnectedNode = firstNode.disconnectLeftChild();
 		assertNull(firstNode.getLeftChildNode(), "Left child was not disconnected.");
-		assertNull(smallNode.getParentNode(), "Parent was not disconnected from left child.");
+		assertNull(disconnectedNode.getParentNode(), "Parent was not disconnected from left child.");
 		assertNotNull(firstNode.getRightChildNode(), "Right child was disconnected when it should not have been.");
 		assertNotNull(bigNode.getParentNode(),
 				"Parent was disconnected from the right child when it should not have been.");
+		assertEquals(disconnectedNode.getLeafDirection(), LeafDirection.NONE);
+		assertEquals(bigNode.getLeafDirection(), LeafDirection.RIGHT);
 	}
 
 	@Test
 	void testDisconnectRightChild() {
 		firstNode.connectLeftChild(smallNode);
 		firstNode.connectRightChild(bigNode);
-		firstNode.disconnectRightChild();
+		AVLNode<Integer> disconnectedNode = firstNode.disconnectRightChild();
 		assertNull(firstNode.getRightChildNode(), "Right child was not disconnected.");
-		assertNull(bigNode.getParentNode(), "Parent was not disconnected from right child.");
+		assertNull(disconnectedNode.getParentNode(), "Parent was not disconnected from right child.");
 		assertNotNull(firstNode.getLeftChildNode(), "Left child was disconnected when it should not have been.");
 		assertNotNull(smallNode.getParentNode(),
 				"Parent was disconnected from the left child when it should not have been.");
+		assertEquals(disconnectedNode.getLeafDirection(), LeafDirection.NONE);
+		assertEquals(smallNode.getLeafDirection(), LeafDirection.LEFT);
 	}
 
 	@Test

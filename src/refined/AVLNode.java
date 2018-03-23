@@ -1,17 +1,25 @@
 package refined;
 
 public class AVLNode<NodeValue extends Comparable<NodeValue>> {
+
+	// ************************************** STATIC CLASS MEMBERS
+	public static enum LeafDirection {
+		LEFT, RIGHT, NONE
+	}
+
 	// ************************************** PRIVATE MEMBERS
 	// Height of the Node
-	int height;
+	private int height;
 	// Object contained by the Node
-	NodeValue nodeValue;
+	private NodeValue nodeValue;
 	// Left Child Node
-	AVLNode<NodeValue> leftChild;
+	private AVLNode<NodeValue> leftChild;
 	// Right Child Node
-	AVLNode<NodeValue> rightChild;
+	private AVLNode<NodeValue> rightChild;
 	// Parent Node
-	AVLNode<NodeValue> parentNode;
+	private AVLNode<NodeValue> parentNode;
+	// Leaf Direction
+	private LeafDirection leafDirection;
 
 	// ****************************************PUBLIC METHODS
 	// Standard Constructor with Object
@@ -107,31 +115,36 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	}
 
 	public boolean hasParent() {
-		if(this.parentNode != null) {
+		if (this.parentNode != null) {
 			return true;
 		}
 		return false;
 	}
-	
-	//Returns true if this node has no children;
-	//Returns false if either the left or right child has a node;
+
+	// Return a leaf direction indicating which leaf of it's parent the node is on.
+	public LeafDirection getLeafDirection() {
+		return leafDirection;
+	}
+
+	// Returns true if this node has no children;
+	// Returns false if either the left or right child has a node;
 	public boolean isEmpty() {
 		if (this.leftChild == null && this.rightChild == null) {
 			return true;
 		}
 		return false;
 	}
-	
-	//Returns true if the left child is null.
-	//Returns false if the left child has a node.
+
+	// Returns true if the left child is null.
+	// Returns false if the left child has a node.
 	public boolean isLeftEmpty() {
 		if (this.leftChild == null)
 			return true;
 		return false;
 	}
 
-	//Returns true if the right child is empty.
-	//Returns false if the right child has a node.
+	// Returns true if the right child is empty.
+	// Returns false if the right child has a node.
 	public boolean isRightEmpty() {
 		if (this.rightChild == null)
 			return true;
@@ -143,6 +156,7 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	public void connectLeftChild(AVLNode<NodeValue> someNode) {
 		this.leftChild = someNode;
 		this.leftChild.setParentNode(this);
+		this.leftChild.setLeafDirection(LeafDirection.LEFT);
 		this.updateNodeHeightShallow();
 	}
 
@@ -162,6 +176,7 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 		AVLNode<NodeValue> someNode = this.leftChild;
 		this.leftChild = null;
 		someNode.setParentNode(null);
+		someNode.setLeafDirection(LeafDirection.NONE);
 		this.updateNodeHeightShallow();
 		return someNode;
 	}
@@ -170,6 +185,7 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	public void connectRightChild(AVLNode<NodeValue> someNode) {
 		this.rightChild = someNode;
 		this.rightChild.setParentNode(this);
+		this.rightChild.setLeafDirection(LeafDirection.RIGHT);
 		this.updateNodeHeightShallow();
 	}
 
@@ -189,13 +205,9 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 		AVLNode<NodeValue> someNode = this.rightChild;
 		this.rightChild = null;
 		someNode.setParentNode(null);
+		someNode.setLeafDirection(LeafDirection.NONE);
 		this.updateNodeHeightShallow();
 		return someNode;
-	}
-
-	// Set this Node's Parent
-	public void setParentNode(AVLNode<NodeValue> someNode) {
-		this.parentNode = someNode;
 	}
 
 	// Get a Reference to this Node's Parent
@@ -249,10 +261,21 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 		parentNode = null;
 		leftChild = null;
 		rightChild = null;
+		leafDirection = null;
 	}
-	
-	
+
 	// ***********************************PRIVATE Methods
+
+	// Set this Node's Parent
+	private void setParentNode(AVLNode<NodeValue> someNode) {
+		this.parentNode = someNode;
+	}
+
+	// Set the leaf direction of the node indicating which leaf of it's parent the
+	// node is on.
+	private void setLeafDirection(LeafDirection someDirection) {
+		leafDirection = someDirection;
+	}
 
 	// Returns a reference to the object contained by the parent of this node.
 	// This method may end up being unused which is why it's private for now.
