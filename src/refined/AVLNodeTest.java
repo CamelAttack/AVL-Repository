@@ -62,6 +62,11 @@ class AVLNodeTest {
 
 	@Test
 	void testConnectLeftChild() {
+		// Test Connecting null
+		firstNode.connectLeftChild(null);
+		assertNull(firstNode.getLeftChildNode());
+		assertNull(firstNode.getLeftChildObject());
+		// Test connection a valid node
 		firstNode.connectLeftChild(smallNode);
 		AVLNode<Integer> childNode = firstNode.getLeftChildNode();
 		AVLNode<Integer> parentNode = childNode.getParentNode();
@@ -72,6 +77,11 @@ class AVLNodeTest {
 
 	@Test
 	void testConnectRightChild() {
+		// Test Connecting null
+		firstNode.connectRightChild(null);
+		assertNull(firstNode.getRightChildNode());
+		assertNull(firstNode.getRightChildObject());
+		// Test Connecting a valid node.
 		firstNode.connectRightChild(bigNode);
 		AVLNode<Integer> childNode = firstNode.getRightChildNode();
 		AVLNode<Integer> parentNode = childNode.getParentNode();
@@ -82,6 +92,10 @@ class AVLNodeTest {
 
 	@Test
 	void testDisconnectLeftChild() {
+		// Test a disconnection with no child
+		assertNull(firstNode.disconnectLeftChild());
+		assertNull(firstNode.getLeftChildNode());
+		// Test disconnection with children
 		firstNode.connectLeftChild(smallNode);
 		firstNode.connectRightChild(bigNode);
 		AVLNode<Integer> disconnectedNode = firstNode.disconnectLeftChild();
@@ -96,6 +110,10 @@ class AVLNodeTest {
 
 	@Test
 	void testDisconnectRightChild() {
+		// Test a disconnection with no child.
+		assertNull(firstNode.disconnectRightChild());
+		assertNull(firstNode.getRightChildObject());
+		// Test disconnection with children.
 		firstNode.connectLeftChild(smallNode);
 		firstNode.connectRightChild(bigNode);
 		AVLNode<Integer> disconnectedNode = firstNode.disconnectRightChild();
