@@ -71,6 +71,32 @@ class NodeBalancerTest {
 		assertEquals(nodeTwo.getLeftChildObject(), nodeOne.getObject());
 		assertEquals(nodeTwo.getRightChildObject(), nodeThree.getObject());
 		assertNull(nodeTwo.getParentNode());
+		
+		//More Complicated test of left right rotation
+		nodeThree.cleanNode();
+		nodeTwo.cleanNode();
+		nodeOne.cleanNode();;
+		nodeOne = null;
+		nodeTwo = null;
+		nodeThree = null;
+		nodeOne = new AVLNode<Integer>(integerList[1]);
+		nodeTwo = new AVLNode<Integer>(integerList[2]);
+		nodeThree = new AVLNode<Integer>(integerList[3]);
+		
+		nodeOne.connectRightChild(nodeThree);
+		nodeThree.connectLeftChild(nodeTwo);
+		nodeThree.connectRightChild(nodeSix);
+		nodeSix.connectLeftChild(nodeFour);
+		nodeFour.connectRightChild(nodeFive);
+		balancer.rotateDoubleWithLeftChild(nodeSix);
+		assertTrue(nodeFour.isEmpty());
+		assertTrue(nodeSix.isEmpty());
+		assertFalse(nodeFive.isLeftEmpty());
+		assertFalse(nodeFive.isRightEmpty());
+		assertEquals(nodeFive.getLeftChildObject(), nodeFour.getObject());
+		assertEquals(nodeFive.getRightChildObject(), nodeSix.getObject());
+		assertEquals(nodeFive.getParentNode().getObject(), nodeThree.getObject());
+		assertEquals(nodeThree.getRightChildObject(), nodeFive.getObject());
 	}
 
 	@Test
@@ -100,6 +126,32 @@ class NodeBalancerTest {
 		assertEquals(nodeTwo.getLeftChildObject(), nodeOne.getObject());
 		assertEquals(nodeTwo.getRightChildObject(), nodeThree.getObject());
 		assertNull(nodeTwo.getParentNode());
+		
+		//More Complicated test of Right Left rotation
+		nodeThree.cleanNode();
+		nodeTwo.cleanNode();
+		nodeOne.cleanNode();;
+		nodeOne = null;
+		nodeTwo = null;
+		nodeThree = null;
+		nodeOne = new AVLNode<Integer>(integerList[1]);
+		nodeTwo = new AVLNode<Integer>(integerList[2]);
+		nodeThree = new AVLNode<Integer>(integerList[3]);
+		
+		nodeOne.connectRightChild(nodeThree);
+		nodeThree.connectLeftChild(nodeTwo);
+		nodeThree.connectRightChild(nodeFour);
+		nodeFour.connectRightChild(nodeSix);
+		nodeSix.connectLeftChild(nodeFive);
+		balancer.rotateDoubleWithRightChild(nodeFour);
+		assertTrue(nodeFour.isEmpty());
+		assertTrue(nodeSix.isEmpty());
+		assertFalse(nodeFive.isLeftEmpty());
+		assertFalse(nodeFive.isRightEmpty());
+		assertEquals(nodeFive.getLeftChildObject(), nodeFour.getObject());
+		assertEquals(nodeFive.getRightChildObject(), nodeSix.getObject());
+		assertEquals(nodeFive.getParentNode().getObject(), nodeThree.getObject());
+		assertEquals(nodeThree.getRightChildObject(), nodeFive.getObject());
 	}
 
 }
