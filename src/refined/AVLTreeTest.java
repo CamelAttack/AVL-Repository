@@ -8,8 +8,11 @@ import org.junit.jupiter.api.Test;
 
 class AVLTreeTest {
 
+	AVLTree<Integer> testTree;
+	
 	@BeforeEach
 	void setUp() throws Exception {
+		testTree = new AVLTree<Integer>();
 	}
 
 	@AfterEach
@@ -17,8 +20,8 @@ class AVLTreeTest {
 	}
 
 	@Test
-	void test() {
-		fail("Not yet implemented");
+	void testInsertObject() {
+		assertFalse( testTree.insertObject(null) );
 	}
 
 }

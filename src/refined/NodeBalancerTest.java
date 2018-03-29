@@ -16,7 +16,6 @@ class NodeBalancerTest {
 	private static AVLNode<Integer> nodeFour;
 	private static AVLNode<Integer> nodeFive;
 	private static AVLNode<Integer> nodeSix;
-	NodeBalancer balancer = new NodeBalancer();
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -48,7 +47,7 @@ class NodeBalancerTest {
 	void testRotateWithLeftChild() {
 		nodeThree.connectLeftChild(nodeTwo);
 		nodeTwo.connectLeftChild(nodeOne);
-		balancer.rotateWithLeftChild(nodeThree);
+		NodeBalancer.rotateWithLeftChild(nodeThree);
 		assertTrue(nodeOne.isEmpty());
 		assertTrue(nodeThree.isEmpty());
 		assertFalse(nodeTwo.isLeftEmpty());
@@ -63,7 +62,7 @@ class NodeBalancerTest {
 		//Simple test of double rotation
 		nodeThree.connectLeftChild(nodeOne);
 		nodeOne.connectRightChild(nodeTwo);
-		balancer.rotateDoubleWithLeftChild(nodeThree);
+		NodeBalancer.rotateDoubleWithLeftChild(nodeThree);
 		assertTrue(nodeOne.isEmpty());
 		assertTrue(nodeThree.isEmpty());
 		assertFalse(nodeTwo.isLeftEmpty());
@@ -88,7 +87,7 @@ class NodeBalancerTest {
 		nodeThree.connectRightChild(nodeSix);
 		nodeSix.connectLeftChild(nodeFour);
 		nodeFour.connectRightChild(nodeFive);
-		balancer.rotateDoubleWithLeftChild(nodeSix);
+		NodeBalancer.rotateDoubleWithLeftChild(nodeSix);
 		assertTrue(nodeFour.isEmpty());
 		assertTrue(nodeSix.isEmpty());
 		assertFalse(nodeFive.isLeftEmpty());
@@ -103,7 +102,7 @@ class NodeBalancerTest {
 	void testRotateWithRightChild() {
 		nodeOne.connectRightChild(nodeTwo);
 		nodeTwo.connectRightChild(nodeThree);
-		balancer.rotateWithRightChild(nodeOne);
+		NodeBalancer.rotateWithRightChild(nodeOne);
 		assertTrue(nodeOne.isEmpty());
 		assertTrue(nodeThree.isEmpty());
 		assertFalse(nodeTwo.isLeftEmpty());
@@ -118,7 +117,7 @@ class NodeBalancerTest {
 		// Simple test of double rotation
 		nodeOne.connectRightChild(nodeThree);
 		nodeThree.connectLeftChild(nodeTwo);
-		balancer.rotateDoubleWithRightChild(nodeOne);
+		NodeBalancer.rotateDoubleWithRightChild(nodeOne);
 		assertTrue(nodeOne.isEmpty());
 		assertTrue(nodeThree.isEmpty());
 		assertFalse(nodeTwo.isLeftEmpty());
@@ -143,7 +142,7 @@ class NodeBalancerTest {
 		nodeThree.connectRightChild(nodeFour);
 		nodeFour.connectRightChild(nodeSix);
 		nodeSix.connectLeftChild(nodeFive);
-		balancer.rotateDoubleWithRightChild(nodeFour);
+		NodeBalancer.rotateDoubleWithRightChild(nodeFour);
 		assertTrue(nodeFour.isEmpty());
 		assertTrue(nodeSix.isEmpty());
 		assertFalse(nodeFive.isLeftEmpty());
