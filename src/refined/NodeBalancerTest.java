@@ -29,12 +29,12 @@ class NodeBalancerTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
-		nodeFive.cleanNode();
-		nodeFour.cleanNode();
-		nodeThree.cleanNode();
-		nodeTwo.cleanNode();
-		nodeOne.cleanNode();
-		nodeSix.cleanNode();
+		nodeFive.deleteNode();
+		nodeFour.deleteNode();
+		nodeThree.deleteNode();
+		nodeTwo.deleteNode();
+		nodeOne.deleteNode();
+		nodeSix.deleteNode();
 		nodeOne = null;
 		nodeTwo = null;
 		nodeThree = null;
@@ -72,9 +72,9 @@ class NodeBalancerTest {
 		assertNull(nodeTwo.getParentNode());
 		
 		//More Complicated test of left right rotation
-		nodeThree.cleanNode();
-		nodeTwo.cleanNode();
-		nodeOne.cleanNode();;
+		nodeThree.deleteNode();
+		nodeTwo.deleteNode();
+		nodeOne.deleteNode();;
 		nodeOne = null;
 		nodeTwo = null;
 		nodeThree = null;
@@ -127,9 +127,9 @@ class NodeBalancerTest {
 		assertNull(nodeTwo.getParentNode());
 		
 		//More Complicated test of Right Left rotation
-		nodeThree.cleanNode();
-		nodeTwo.cleanNode();
-		nodeOne.cleanNode();;
+		nodeThree.deleteNode();
+		nodeTwo.deleteNode();
+		nodeOne.deleteNode();;
 		nodeOne = null;
 		nodeTwo = null;
 		nodeThree = null;

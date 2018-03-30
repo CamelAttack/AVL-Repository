@@ -63,8 +63,34 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 		return false;
 	}
 
+	//Deletes all nodes in the tree
+	public void deleteTree() {
+		AVLNode<TreeObject> currentNode = null;
+		ArrayDeque<AVLNode<TreeObject>> deleteList = new ArrayDeque<AVLNode<TreeObject>>();
+		deleteList.push(this.root);
+		while(!deleteList.isEmpty()) {
+			currentNode = deleteList.getLast();
+			if(currentNode.isEmpty()) {
+				deleteList.pop();
+				currentNode.deleteNode();
+				currentNode = null;
+			} else {
+				if(!currentNode.isLeftEmpty()) {
+					deleteList.push(currentNode.getLeftChildNode());
+				}
+				if(!currentNode.isRightEmpty()) {
+					deleteList.push(currentNode.getRightChildNode());
+				}
+			}
+		}
+	}
+	
 	// Print Tree
 	public void printTree() {
+		if(this.root == null) {
+			System.out.println("This tree is empty.");
+			return;
+		}
 		AVLNode<TreeObject> currentNode = null;
 		ArrayDeque<AVLNode<TreeObject>> printList = new ArrayDeque<AVLNode<TreeObject>>();
 
@@ -79,6 +105,13 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 			if (!currentNode.isRightEmpty())
 				printList.add(currentNode.getRightChildNode());
 		}
+	}
+	
+	//Gets the tree root node.
+	//Only for testing and debugging purposes. 
+	//If you use the node given as a replacment for tree functionality any problems or error are your own fault. 
+	public AVLNode<TreeObject> getTreeRoot(){
+		return this.root;
 	}
 
 	// *****PRIVATE Functions
@@ -201,8 +234,22 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 	}
 
 	// Find and return a node in the tree matching a given object.
-	private AVLNode<TreeObject> findNodeWithObject(TreeObject someObjecct) {
-		return null;
+	private AVLNode<TreeObject> findNodeWithObject(TreeObject someObject) {
+		boolean objectFound = false;
+		AVLNode<TreeObject> foundNode = null;
+		AVLNode<TreeObject> currentNode = this.root;
+		while(!objectFound) {
+			if(currentNode == null) {
+				foundNode = null;
+				objectFound = true;
+			} else {
+				if(someObject.compareTo(currentNode.getObject()) == 0) {
+					foundNode = currentNode;
+					objectFound = true;
+				}
+			}
+		}
+		return foundNode;
 	}
 
 }

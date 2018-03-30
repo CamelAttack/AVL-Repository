@@ -271,8 +271,15 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 		return builder.toString();
 	}
 
-	public void cleanNode() {
+	public void deleteNode() {
 		nodeValue = null;
+		if(parentNode != null) {
+			if(leafDirection == LeafDirection.LEFT) {
+				parentNode.disconnectLeftChild();
+			} else if(leafDirection == LeafDirection.RIGHT) {
+				parentNode.disconnectRightChild();
+			}
+		}
 		parentNode = null;
 		leftChild = null;
 		rightChild = null;

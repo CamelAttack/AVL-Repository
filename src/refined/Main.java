@@ -11,6 +11,11 @@ public class Main {
 		ourTree.insertObject(buildInteger(2));
 		ourTree.insertObject(buildInteger(3));
 		ourTree.printTree();
+		System.out.println(" ");
+		ourTree.insertObject(buildInteger(4));
+		ourTree.insertObject(buildInteger(5));
+		ourTree.insertObject(buildInteger(6));
+		ourTree.printTree();
 	}
 
 	public static Integer buildInteger(int someNumber) {

@@ -24,13 +24,13 @@ class AVLNodeTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		if (firstNode != null) {
-			firstNode.cleanNode();
+			firstNode.deleteNode();
 		}
 		if (bigNode != null) {
-			bigNode.cleanNode();
+			bigNode.deleteNode();
 		}
 		if (smallNode != null) {
-			smallNode.cleanNode();
+			smallNode.deleteNode();
 		}
 		firstNode = new AVLNode<Integer>(integerList[0]);
 		bigNode = new AVLNode<Integer>(integerList[1]);
