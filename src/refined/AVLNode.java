@@ -1,6 +1,6 @@
 package refined;
 
-public class AVLNode<NodeValue extends Comparable<NodeValue>> {
+public class AVLNode<NodeObject extends Comparable<NodeObject>> {
 
 	// ************************************** STATIC CLASS MEMBERS
 	public static enum LeafDirection {
@@ -11,26 +11,26 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	// Height of the Node
 	private int height;
 	// Object contained by the Node
-	private NodeValue nodeValue;
+	private NodeObject nodeObject;
 	// Left Child Node
-	private AVLNode<NodeValue> leftChild;
+	private AVLNode<NodeObject> leftChild;
 	// Right Child Node
-	private AVLNode<NodeValue> rightChild;
+	private AVLNode<NodeObject> rightChild;
 	// Parent Node
-	private AVLNode<NodeValue> parentNode;
+	private AVLNode<NodeObject> parentNode;
 	// Leaf Direction
 	private LeafDirection leafDirection;
 
 	// ****************************************PUBLIC METHODS
 	// Standard Constructor with Object
-	AVLNode(NodeValue someValue) {
-		this.nodeValue = someValue;
+	AVLNode(NodeObject someObject) {
+		this.nodeObject = someObject;
 		this.height = 0;
 	}
 
 	// Constructor with Object and Parent
-	AVLNode(NodeValue someValue, AVLNode<NodeValue> someNode) {
-		this.nodeValue = someValue;
+	AVLNode(NodeObject someObject, AVLNode<NodeObject> someNode) {
+		this.nodeObject = someObject;
 		this.parentNode = someNode;
 		this.height = 0;
 	}
@@ -105,13 +105,13 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	}
 
 	// Set Node Object
-	public void setObject(NodeValue someValue) {
-		this.nodeValue = someValue;
+	public void setObject(NodeObject someObject) {
+		this.nodeObject = someObject;
 	}
 
 	// Return a reference of the Node's Object
-	public NodeValue getObject() {
-		return this.nodeValue;
+	public NodeObject getObject() {
+		return this.nodeObject;
 	}
 
 	public boolean hasParent() {
@@ -153,7 +153,7 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 
 	// Set the Left Child with a given Node; Set that Node's Parent as this node
 	// Update this Node's Height with a Shallow Update
-	public void connectLeftChild(AVLNode<NodeValue> someNode) {
+	public void connectLeftChild(AVLNode<NodeObject> someNode) {
 		this.leftChild = someNode;
 		if (this.leftChild != null) {
 			this.leftChild.setParentNode(this);
@@ -163,13 +163,13 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	}
 
 	// Return a Reference to the Left Child
-	public AVLNode<NodeValue> getLeftChildNode() {
+	public AVLNode<NodeObject> getLeftChildNode() {
 		return this.leftChild;
 	}
 
 	// Return a reference to the Left Child's Object
 	// Otherwise return null.
-	public NodeValue getLeftChildObject() {
+	public NodeObject getLeftChildObject() {
 		if (this.leftChild != null)
 			return this.leftChild.getObject();
 		return null;
@@ -177,9 +177,9 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 
 	// Deletes all connection between this node and it's left child.
 	// Returns the child. Shallow Height Update.
-	public AVLNode<NodeValue> disconnectLeftChild() {
+	public AVLNode<NodeObject> disconnectLeftChild() {
 		if (this.leftChild != null) {
-			AVLNode<NodeValue> someNode = this.leftChild;
+			AVLNode<NodeObject> someNode = this.leftChild;
 			this.leftChild = null;
 			someNode.setParentNode(null);
 			someNode.setLeafDirection(LeafDirection.NONE);
@@ -190,7 +190,7 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	}
 
 	// Set the Right Child with a given Node; Set that Node's Parent as this Node
-	public void connectRightChild(AVLNode<NodeValue> someNode) {
+	public void connectRightChild(AVLNode<NodeObject> someNode) {
 		this.rightChild = someNode;
 		if (this.rightChild != null) {
 			this.rightChild.setParentNode(this);
@@ -200,12 +200,12 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	}
 
 	// Return a reference to the Right Child
-	public AVLNode<NodeValue> getRightChildNode() {
+	public AVLNode<NodeObject> getRightChildNode() {
 		return this.rightChild;
 	}
 
 	// Return a reference of Right Child's Object
-	public NodeValue getRightChildObject() {
+	public NodeObject getRightChildObject() {
 		if (this.rightChild != null)
 			return this.rightChild.getObject();
 		return null;
@@ -213,9 +213,9 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 
 	// Deletes all connection between this node and it's right child.
 	// Returns the child.
-	public AVLNode<NodeValue> disconnectRightChild() {
+	public AVLNode<NodeObject> disconnectRightChild() {
 		if (this.rightChild != null) {
-			AVLNode<NodeValue> someNode = this.rightChild;
+			AVLNode<NodeObject> someNode = this.rightChild;
 			this.rightChild = null;
 			someNode.setParentNode(null);
 			someNode.setLeafDirection(LeafDirection.NONE);
@@ -226,8 +226,38 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	}
 
 	// Get a Reference to this Node's Parent
-	public AVLNode<NodeValue> getParentNode() {
+	public AVLNode<NodeObject> getParentNode() {
 		return this.parentNode;
+	}
+
+	// Removes the connection between this node and it's parent.
+	// Returns the former parent node.
+	public AVLNode<NodeObject> removeParentNodeConnection() {
+		if (this.parentNode == null) {
+			return null;
+		}
+
+		AVLNode<NodeObject> parentNode = this.parentNode;
+		this.parentNode = null;
+		if (leafDirection == LeafDirection.LEFT) {
+			parentNode.disconnectLeftChild();
+		} else if (leafDirection == LeafDirection.RIGHT) {
+			parentNode.disconnectRightChild();
+		}
+		return parentNode;
+	}
+
+	// Replaces the properties of this node with those of another node, without
+	// altering the position of this node in it's tree.
+	// Replaces: Object, height, children.
+	// However it does not alter the leafDirection or parentNode. The intention is
+	// for this node to remain in the same position in it's tree.
+	// NOTEABLY: Does not clean or delete the node that is replacing this one.
+	public void replaceWithNode(AVLNode<NodeObject> someNode) {
+		this.height = someNode.getHeight();
+		this.nodeObject = someNode.getObject();
+		this.connectLeftChild(someNode.getLeftChildNode());
+		this.connectRightChild(someNode.getRightChildNode());
 	}
 
 	// Return string with all the information about this node; Includes: Value,
@@ -236,7 +266,7 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	public String nodeToString() {
 		StringBuilder builder = new StringBuilder("Node Object: ");
 		// Append the object for this node
-		builder.append(this.nodeValue);
+		builder.append(this.nodeObject);
 		// Append the height for this node
 		builder.append(" Height: ");
 		builder.append(this.height);
@@ -272,11 +302,11 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	}
 
 	public void deleteNode() {
-		nodeValue = null;
-		if(parentNode != null) {
-			if(leafDirection == LeafDirection.LEFT) {
+		nodeObject = null;
+		if (parentNode != null) {
+			if (leafDirection == LeafDirection.LEFT) {
 				parentNode.disconnectLeftChild();
-			} else if(leafDirection == LeafDirection.RIGHT) {
+			} else if (leafDirection == LeafDirection.RIGHT) {
 				parentNode.disconnectRightChild();
 			}
 		}
@@ -289,7 +319,7 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	// ***********************************PRIVATE Methods
 
 	// Set this Node's Parent
-	private void setParentNode(AVLNode<NodeValue> someNode) {
+	private void setParentNode(AVLNode<NodeObject> someNode) {
 		this.parentNode = someNode;
 	}
 
@@ -302,7 +332,7 @@ public class AVLNode<NodeValue extends Comparable<NodeValue>> {
 	// Returns a reference to the object contained by the parent of this node.
 	// This method may end up being unused which is why it's private for now.
 	// DELETE this routine if it goes unused.
-	private NodeValue getParentObject() {
+	private NodeObject getParentObject() {
 		return parentNode.getObject();
 	}
 
