@@ -247,19 +247,6 @@ public class AVLNode<NodeObject extends Comparable<NodeObject>> {
 		return parentNode;
 	}
 
-	// Replaces the properties of this node with those of another node, without
-	// altering the position of this node in it's tree.
-	// Replaces: Object, height, children.
-	// However it does not alter the leafDirection or parentNode. The intention is
-	// for this node to remain in the same position in it's tree.
-	// NOTEABLY: Does not clean or delete the node that is replacing this one.
-	public void replaceWithNode(AVLNode<NodeObject> someNode) {
-		this.height = someNode.getHeight();
-		this.nodeObject = someNode.getObject();
-		this.connectLeftChild(someNode.getLeftChildNode());
-		this.connectRightChild(someNode.getRightChildNode());
-	}
-
 	// Return string with all the information about this node; Includes: Value,
 	// Height, Parent,
 	// Balance, and Children

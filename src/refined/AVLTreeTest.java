@@ -19,10 +19,138 @@ class AVLTreeTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		testTree.deleteTree();
+	}
+
+	@Test
+	void testDeleteTree() {
+		System.out.println("********** TESTING DELETE TREE ***********");
+		// Test Empty Tree
+		testTree.deleteTree();
+		// Test Single Element
+		testTree.insertObject(integerList[1]);
+		testTree.deleteTree();
+		assertNull(testTree.getTreeRoot());
+		// Test Full Tree
+		testTree.insertObject(integerList[1]);
+		testTree.insertObject(integerList[2]);
+		testTree.insertObject(integerList[3]);
+		testTree.insertObject(integerList[4]);
+		testTree.insertObject(integerList[5]);
+		testTree.insertObject(integerList[6]);
+		testTree.insertObject(integerList[7]);
+		AVLNode<Integer> nodeFour = testTree.getTreeRoot();
+		AVLNode<Integer> nodeTwo = nodeFour.getLeftChildNode();
+		AVLNode<Integer> nodeSix = nodeFour.getRightChildNode();
+		AVLNode<Integer> nodeOne = nodeTwo.getLeftChildNode();
+		AVLNode<Integer> nodeThree = nodeTwo.getRightChildNode();
+		AVLNode<Integer> nodeFive = nodeSix.getLeftChildNode();
+		AVLNode<Integer> nodeSeven = nodeSix.getRightChildNode();
+		testTree.deleteTree();
+		assertTrue(isNodeCleaned(nodeFour));
+		assertTrue(isNodeCleaned(nodeTwo));
+		assertTrue(isNodeCleaned(nodeSix));
+		assertTrue(isNodeCleaned(nodeOne));
+		assertTrue(isNodeCleaned(nodeThree));
+		assertTrue(isNodeCleaned(nodeFive));
+		assertTrue(isNodeCleaned(nodeSeven));
+	}
+
+	@Test
+	void testDeleteObject() {
+		System.out.println(
+				"****************************** TEST OBJECT DELETIONS ***************************************");
+		// Test Deleting from an Empty Tree
+		assertFalse(testTree.deleteObject(integerList[1]));
+		// Test Deleting an Object Not in the tree
+		testTree.insertObject(integerList[1]);
+		testTree.insertObject(integerList[2]);
+		testTree.insertObject(integerList[3]);
+		assertFalse(testTree.deleteObject(integerList[4]));
+		// Test Deleting an Object from a three node tree.
+		assertTrue(testTree.deleteObject(integerList[3]));
+		// Test deleting several object from a three node tree.
+		assertTrue(testTree.deleteObject(integerList[1]));
+		assertTrue(testTree.deleteObject(integerList[2]));
+		assertNull(testTree.getTreeRoot());
+		testTree.deleteTree();
+		// Test Deleting an Object from a larger simple tree.
+		testTree.insertObject(integerList[1]);
+		testTree.insertObject(integerList[2]);
+		testTree.insertObject(integerList[3]);
+		testTree.insertObject(integerList[4]);
+		testTree.insertObject(integerList[5]);
+		testTree.insertObject(integerList[6]);
+		testTree.insertObject(integerList[7]);
+		AVLNode<Integer> nodeFour = testTree.getTreeRoot();
+		AVLNode<Integer> nodeTwo = nodeFour.getLeftChildNode();
+		AVLNode<Integer> nodeSix = nodeFour.getRightChildNode();
+		AVLNode<Integer> nodeOne = nodeTwo.getLeftChildNode();
+		AVLNode<Integer> nodeThree = nodeTwo.getRightChildNode();
+		AVLNode<Integer> nodeFive = nodeSix.getLeftChildNode();
+		AVLNode<Integer> nodeSeven = nodeSix.getRightChildNode();
+		testTree.deleteObject(integerList[6]);
+		nodeSeven = nodeSix;
+		assertTrue(nodeSeven.isRightEmpty());
+		assertFalse(nodeSeven.isLeftEmpty());
+		assertEquals(nodeSeven.getLeftChildNode(), nodeFive);
+		assertEquals(nodeFive.getParentNode(), nodeSeven);
+		// Test deleting several objects from a larger tree.
+		testTree.deleteObject(integerList[7]);
+		nodeFive = nodeSeven;
+		assertTrue(nodeFive.isRightEmpty());
+		assertTrue(nodeFive.isLeftEmpty());
+		assertEquals(nodeFour.getRightChildNode(), nodeFive);
+		assertEquals(nodeFive.getParentNode(), nodeFour);
+		testTree.deleteTree();
+		// Test Deleting the root from a single node tree.
+		testTree.insertObject(integerList[1]);
+		nodeOne = testTree.getTreeRoot();
+		testTree.deleteObject(integerList[1]);
+		assertNull(testTree.getTreeRoot());
+		assertTrue(isNodeCleaned(nodeOne));
+		// Test Deleting the root from a three node tree.
+		testTree.insertObject(integerList[1]);
+		testTree.insertObject(integerList[2]);
+		testTree.insertObject(integerList[3]);
+		nodeTwo = testTree.getTreeRoot();
+		nodeOne = nodeTwo.getLeftChildNode();
+		nodeThree = nodeTwo.getRightChildNode();
+		testTree.deleteObject(integerList[2]);
+		nodeThree = nodeTwo;
+		assertEquals(testTree.getTreeRoot().getObject(), nodeThree.getObject());
+		assertEquals(nodeOne.getObject(), nodeThree.getLeftChildObject());
+		assertEquals(nodeOne.getParentNode().getObject(), nodeThree.getObject());
+		testTree.deleteTree();
+		// Test deleting the root from a larger tree.
+		testTree.insertObject(integerList[1]);
+		testTree.insertObject(integerList[2]);
+		testTree.insertObject(integerList[3]);
+		testTree.insertObject(integerList[4]);
+		testTree.insertObject(integerList[5]);
+		testTree.insertObject(integerList[6]);
+		testTree.insertObject(integerList[7]);
+		nodeFour = testTree.getTreeRoot();
+		nodeTwo = nodeFour.getLeftChildNode();
+		nodeSix = nodeFour.getRightChildNode();
+		nodeOne = nodeTwo.getLeftChildNode();
+		nodeThree = nodeTwo.getRightChildNode();
+		nodeFive = nodeSix.getLeftChildNode();
+		nodeSeven = nodeSix.getRightChildNode();
+		testTree.deleteObject(integerList[4]);
+		assertEquals(nodeFour.getObject(), integerList[5]);
+		assertNull(nodeFive.getObject());
+		nodeFive = nodeFour;
+		assertEquals(nodeFive.getObject(), testTree.getTreeRoot().getObject());
+		assertEquals(nodeFive.getObject(), integerList[5]);
+		assertEquals(nodeFive.getLeftChildNode().getObject(), nodeTwo.getObject());
+		assertEquals(nodeFive.getRightChildObject(), nodeSix.getObject());
+		System.out.println("**************************** ENDING TEST OBJECT DELETIONS ***********************");
 	}
 
 	@Test
 	void testInsertObjectBasic() {
+		System.out.println("*************** TESTING SIMPLE TREE INSERTIONS *******************************");
 		// Test Null Value
 		assertFalse(testTree.insertObject(null));
 
@@ -74,6 +202,24 @@ class AVLTreeTest {
 		AVLNode<Integer> nodeSix = nodeFour.getRightChildNode();
 		assertEquals(integerList[5], nodeSix.getLeftChildObject());
 		assertEquals(integerList[7], nodeSix.getRightChildObject());
+		System.out.println("*************** ENDING SIMPLE TREE INSERTIONS *******************************");
+	}
+
+	private boolean isNodeCleaned(AVLNode someNode) {
+		boolean nodeClean = true;
+		if (someNode.getObject() != null) {
+			nodeClean = false;
+		}
+		if (someNode.getLeftChildNode() != null) {
+			nodeClean = false;
+		}
+		if (someNode.getRightChildNode() != null) {
+			nodeClean = false;
+		}
+		if (someNode.getParentNode() != null) {
+			nodeClean = false;
+		}
+		return nodeClean;
 	}
 
 }

@@ -67,9 +67,10 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 	// Return false if no object was found to be deleted.
 	public boolean deleteObject(TreeObject someObject) {
 		boolean deletionStatus = false;
-		// If someObject is NULL
-		if (someObject == null) {
+		// If someObject is NULL, or there is no ROOT node
+		if (someObject == null || this.root == null) {
 			// Return FALSE because there is no object to look for
+			// Or the tree is empty and there is nothing to delete.
 			return deletionStatus;
 		}
 		// Find the nodeForDeletion with findNodeWithObject
@@ -80,41 +81,59 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 			return deletionStatus;
 		}
 
-		// Find the replacmentNode;
-		AVLNode<TreeObject> replacmentNode = null;
 		// If the node has no children
 		if (nodeForDeletion.isEmpty()) {
-			//Simply delete the node; No balance problems when deleting a leaf
-			nodeForDeletion.deleteNode();
-			//Set the deletion status to TRUE;
-			deletionStatus = true;
-			
-			// Else If the nodeForDeletion only has a left Child
-		} else if (!nodeForDeletion.isLeftEmpty()) {
-			// Set the replacmentNode equal to the nodeForDeletion's left child
-			replacmentNode = nodeForDeletion.getLeftChildNode();
-
-			// else If the nodeForDeletion only has a right Child
-		} else if (!nodeForDeletion.isRightEmpty()) {
-			// Set the replacmentNode equal to the nodeForDeletion's right child
-			replacmentNode = nodeForDeletion.getRightChildNode();
-
-		} else {
-			// Call the deleteMinimum node on the nodeForDeletion's right Subtree
-			// Save replacmentNode as the node returned from deleteMinimum
-			replacmentNode = removeMinimumNode(nodeForDeletion.getRightChildNode());
-		}
-
-		if (replacmentNode != null) {
-			// Replace nodeForDeletion with replacmentNode using AVLNode replaceNode Routine
-			nodeForDeletion.replaceWithNode(replacmentNode);
-			// Call the balanceToRoot routine; Balance's all nodes that may have a new
-			// balance
-			balanceToRoot(replacmentNode, nodeForDeletion);
-			// Delete the nodeForDeletion;
+			// If the node being deleted is the root
+			if (areNodesEqual(nodeForDeletion, this.root)) {
+				// Then set the root equal to null, there will be no more nodes in the tree
+				// after deletion.
+				this.root = null;
+			}
+			// Simply delete the node; No balance problems when deleting a leaf
 			nodeForDeletion.deleteNode();
 			// Set the deletion status to TRUE;
 			deletionStatus = true;
+
+			// Else If the nodeForDeletion only has a left Child
+		} else {
+
+			// Find the replacmentNode;
+			AVLNode<TreeObject> replacmentNode = null;
+			if (!nodeForDeletion.isRightEmpty() && !nodeForDeletion.isRightEmpty()) {
+				// Call the deleteMinimum node on the nodeForDeletion's right Subtree
+				// Save replacmentNode as the node returned from deleteMinimum
+				replacmentNode = removeMinimumNode(nodeForDeletion.getRightChildNode());
+			} else if (!nodeForDeletion.isLeftEmpty()) {
+				// Set the replacmentNode equal to the nodeForDeletion's left child
+				replacmentNode = nodeForDeletion.getLeftChildNode();
+
+				// else If the nodeForDeletion only has a right Child
+			} else if (!nodeForDeletion.isRightEmpty()) {
+				// Set the replacmentNode equal to the nodeForDeletion's right child
+				replacmentNode = nodeForDeletion.getRightChildNode();
+			}
+
+			if (replacmentNode != null) {
+
+				System.out.println(
+						"AVLTREE :: deleteOBject :: " + " Replacment Node Value is: " + replacmentNode.getObject());
+				System.out.println(
+						"AVLTREE :: deleteOBject :: " + " Node for Deletion Value is: " + nodeForDeletion.getObject());
+
+				// Delete nodeForDeletion by replacing it's object/value with that of the
+				// replacmentNode.
+				nodeForDeletion.setObject(replacmentNode.getObject());
+				System.out.println("AVLTREE :: deleteOBject :: " + " After replacment node for deletion value is: "
+						+ nodeForDeletion.getObject());
+				// Call the balanceToRoot routine; Balance's all nodes that may have a new
+				// balance
+				balanceToRoot(replacmentNode, nodeForDeletion);
+				// Deletes the replacmentNode, it has replaced the nodeForDeletion
+				replacmentNode.deleteNode();
+				// Set the deletion status to TRUE;
+				deletionStatus = true;
+			}
+
 		}
 
 		return deletionStatus;
@@ -124,26 +143,27 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 	public void deleteTree() {
 		AVLNode<TreeObject> currentNode = null;
 		ArrayDeque<AVLNode<TreeObject>> deleteList = new ArrayDeque<AVLNode<TreeObject>>();
-		deleteList.push(this.root);
+		if (this.root != null) {
+			deleteList.push(this.root);
+			this.root = null;
+		}
 		while (!deleteList.isEmpty()) {
-			currentNode = deleteList.getLast();
-			if (currentNode.isEmpty()) {
-				deleteList.pop();
-				currentNode.deleteNode();
-				currentNode = null;
-			} else {
-				if (!currentNode.isLeftEmpty()) {
-					deleteList.push(currentNode.getLeftChildNode());
-				}
-				if (!currentNode.isRightEmpty()) {
-					deleteList.push(currentNode.getRightChildNode());
-				}
+			currentNode = deleteList.pop();
+			if (!currentNode.isLeftEmpty()) {
+				deleteList.push(currentNode.getLeftChildNode());
 			}
+			if (!currentNode.isRightEmpty()) {
+				deleteList.push(currentNode.getRightChildNode());
+			}
+
+			currentNode.deleteNode();
+			currentNode = null;
 		}
 	}
 
 	// Print Tree
 	public void printTree() {
+		System.out.println("****** Printing  Tree ******");
 		if (this.root == null) {
 			System.out.println("This tree is empty.");
 			return;
@@ -162,6 +182,8 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 			if (!currentNode.isRightEmpty())
 				printList.add(currentNode.getRightChildNode());
 		}
+		System.out.println("****** End Print Tree *****");
+		System.out.println("");
 	}
 
 	// Gets the tree root node.
@@ -209,14 +231,8 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 				} else {
 					NodeBalancer.rotateDoubleWithLeftChild(parentNode);
 				}
-
-				// If the parent node is equal to the current root;
-				if (areNodesEqual(parentNode, this.root)) {
-					// Then the root is no longer correct after a rotation.
-					// The root needs to be changed.
-					// Set the new root to be the parent node's parent
-					this.root = parentNode.getParentNode();
-				}
+				// Perform a post rotation correction.
+				postRotationRootEvaluation(parentNode);
 			}
 
 			// Else-If someNode is greater than parentNode
@@ -242,13 +258,8 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 					NodeBalancer.rotateDoubleWithRightChild(parentNode);
 				}
 
-				// If the parent node is equal to the root
-				if (areNodesEqual(parentNode, this.root)) {
-					// Then the root is no longer correct after a rotation.
-					// The root needs to be changed.
-					// Set the new root equal to the parent node's parent
-					this.root = parentNode.getParentNode();
-				}
+				// Perform a post rotation correction.
+				postRotationRootEvaluation(parentNode);
 			}
 
 			// Else; someNode is equal to currentNode
@@ -367,12 +378,14 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 			}
 		}
 
-		// While parentNode is not node or does not equal someNode
-		while (parentNode != null || !areNodesEqual(parentNode, someNode)) {
+		// While parentNode is not null or does not equal someNode
+		while (parentNode != null && !areNodesEqual(parentNode, someNode)) {
 			// If the parentNode is not balanced
 			if (parentNode.calculateBalance() > 1) {
 				// Balance the parentNode
 				NodeBalancer.rotateWithLeftChild(parentNode);
+				// Perform a post rotation correction.
+				postRotationRootEvaluation(parentNode);
 				// Set parentNode equal to it's replacement after the rotation
 				parentNode = parentNode.getParentNode();
 			}
@@ -395,17 +408,28 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 					// RotateWithRightChild on currentNode
 					NodeBalancer.rotateWithRightChild(currentNode);
 					// Else if removed node is greater than the currentNode
-				} else if (isLeftNodeGreaterThan(removedNode, currentNode)) {
+				} else {
 					// RotateWithLeftChild on currentNode
 					NodeBalancer.rotateWithLeftChild(currentNode);
 				}
+				// Perform a post rotation correction.
+				postRotationRootEvaluation(currentNode);
 				// Set currentNode equal to currentNode's parent
 				// They changed places during the rotation.
 				currentNode = currentNode.getParentNode();
 			}
-
 			// Set currentNode equal to it's parentNode; Moving up to the next level.
 			currentNode = currentNode.getParentNode();
+		}
+	}
+
+	private void postRotationRootEvaluation(AVLNode<TreeObject> someNode) {
+		// If the some node is equal to the current root;
+		if (areNodesEqual(someNode, this.root)) {
+			// Then the root is no longer correct after a rotation.
+			// The root needs to be changed.
+			// Set the new root to be the parent node's parent
+			this.root = someNode.getParentNode();
 		}
 	}
 
