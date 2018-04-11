@@ -8,15 +8,18 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 	// *****PRIVATE Objects
 	// The tree root
 	private AVLNode<TreeObject> root;
+	private int nodeCount;
 
 	// *****PUBLIC Functions
 
 	AVLTree() {
 		root = null;
+		nodeCount = 0;
 	}
 
 	AVLTree(TreeObject someObject) {
 		root = new AVLNode<TreeObject>(someObject);
+		nodeCount = 1;
 	}
 
 	// Inserts an Object into the tree.
@@ -41,6 +44,11 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 		} else {
 			// Call the routine that inserts the newly created node into the tree.
 			insertComplete = insertNode(this.root, someNode);
+		}
+		// If a node was inserted into the tree.
+		if (insertComplete) {
+			// Increase the node count by one.
+			nodeCount++;
 		}
 		// Operation Complete return true.
 		return insertComplete;
@@ -115,16 +123,21 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 
 			if (replacmentNode != null) {
 
-				System.out.println(
-						"AVLTREE :: deleteOBject :: " + " Replacment Node Value is: " + replacmentNode.getObject());
-				System.out.println(
-						"AVLTREE :: deleteOBject :: " + " Node for Deletion Value is: " + nodeForDeletion.getObject());
+				// System.out.println(
+				// "AVLTREE :: deleteOBject :: " + " Replacment Node Value is: " +
+				// replacmentNode.getObject());
+				// System.out.println(
+				// "AVLTREE :: deleteOBject :: " + " Node for Deletion Value is: " +
+				// nodeForDeletion.getObject());
 
 				// Delete nodeForDeletion by replacing it's object/value with that of the
 				// replacmentNode.
 				nodeForDeletion.setObject(replacmentNode.getObject());
-				System.out.println("AVLTREE :: deleteOBject :: " + " After replacment node for deletion value is: "
-						+ nodeForDeletion.getObject());
+
+				// System.out.println("AVLTREE :: deleteOBject :: " + " After replacment node
+				// for deletion value is: "
+				// + nodeForDeletion.getObject());
+
 				// Call the balanceToRoot routine; Balance's all nodes that may have a new
 				// balance
 				balanceToRoot(replacmentNode, nodeForDeletion);
@@ -135,7 +148,11 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 			}
 
 		}
-
+		// If a node was deleted from the tree
+		if (deletionStatus) {
+			// Reduce the node count by one;
+			nodeCount--;
+		}
 		return deletionStatus;
 	}
 
@@ -157,21 +174,58 @@ public class AVLTree<TreeObject extends Comparable<TreeObject>> {
 			}
 
 			currentNode.deleteNode();
+			nodeCount--;
 			currentNode = null;
 		}
+
+		if (nodeCount > 0) {
+			System.err.println("DeleteTree :: Node Count was more than zero after deleting every node.");
+		} else if (nodeCount < 0) {
+			System.err.println("DeleteTree :: Node Count was less than zero after deleting every node.");
+		}
+	}
+
+	// Returns the current Node Count of the tree
+	public int getNodeCount() {
+		return this.nodeCount;
+	}
+
+	// Iterates through every element of the tree to find the node count.
+	// Returns the final count, or -1 if the root is null.
+	public int deepNodeCountCheck() {
+		if (this.root == null) {
+			return -1;
+		}
+		int numberNodes = 0;
+		AVLNode<TreeObject> currentNode = null;
+		ArrayDeque<AVLNode<TreeObject>> nodeList = new ArrayDeque<AVLNode<TreeObject>>();
+		nodeList.push(this.root);
+		while (!nodeList.isEmpty()) {
+			currentNode = nodeList.pop();
+			numberNodes++;
+			if (!currentNode.isLeftEmpty()) {
+				nodeList.push(currentNode.getLeftChildNode());
+			}
+			if (!currentNode.isRightEmpty()) {
+				nodeList.push(currentNode.getRightChildNode());
+			}
+			currentNode = null;
+		}
+
+		return numberNodes;
 	}
 
 	// Print Tree
 	public void printTree() {
 		System.out.println("****** Printing  Tree ******");
 		if (this.root == null) {
-			System.out.println("This tree is empty.");
+			System.out.println("This tree is empty. Node Count: " + this.nodeCount);
 			return;
 		}
 		AVLNode<TreeObject> currentNode = null;
 		ArrayDeque<AVLNode<TreeObject>> printList = new ArrayDeque<AVLNode<TreeObject>>();
 
-		System.out.println("Root: " + this.root.nodeToString());
+		System.out.println("Tree Root: " + this.root.getObject() + " Number of Nodes: " + this.nodeCount);
 		printList.add(this.root);
 
 		while (!printList.isEmpty()) {

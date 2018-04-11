@@ -205,6 +205,66 @@ class AVLTreeTest {
 		System.out.println("*************** ENDING SIMPLE TREE INSERTIONS *******************************");
 	}
 
+	@Test
+	void testNodeCounts() {
+		// Test Empty Tree Count
+		assertEquals(0, testTree.getNodeCount());
+		assertEquals(-1, testTree.deepNodeCountCheck());
+		// Test Single Element Count
+		testTree.insertObject(integerList[1]);
+		assertEquals(1, testTree.getNodeCount());
+		assertEquals(1, testTree.deepNodeCountCheck());
+		// Test Three Element Count
+		testTree.insertObject(integerList[2]);
+		testTree.insertObject(integerList[3]);
+		assertEquals(3, testTree.getNodeCount());
+		assertEquals(3, testTree.deepNodeCountCheck());
+		// Test Seven Element Count
+		testTree.insertObject(integerList[4]);
+		testTree.insertObject(integerList[5]);
+		testTree.insertObject(integerList[6]);
+		testTree.insertObject(integerList[7]);
+		assertEquals(7, testTree.getNodeCount());
+		assertEquals(7, testTree.deepNodeCountCheck());
+		// Test Single Deletion Count
+		testTree.deleteObject(integerList[4]);
+		assertEquals(6, testTree.getNodeCount());
+		assertEquals(6, testTree.deepNodeCountCheck());
+		// Test Multiple Deletion count
+		testTree.deleteObject(integerList[2]);
+		testTree.deleteObject(integerList[6]);
+		testTree.deleteObject(integerList[1]);
+		assertEquals(3, testTree.getNodeCount());
+		assertEquals(3, testTree.deepNodeCountCheck());
+	}
+
+	@Test
+	void testCheckForObject() {
+		// Check an empty tree
+		assertFalse(testTree.checkForObject(integerList[0]));
+		// Check with a null object
+		testTree.insertObject(integerList[1]);
+		testTree.insertObject(integerList[2]);
+		testTree.insertObject(integerList[3]);
+		testTree.insertObject(integerList[4]);
+		testTree.insertObject(integerList[5]);
+		testTree.insertObject(integerList[6]);
+		testTree.insertObject(integerList[7]);
+		testTree.printTree();
+		assertFalse(testTree.checkForObject(null));
+		// Check with an object not in the tree
+		assertFalse(testTree.checkForObject(integerList[0]));
+		// Check for each element
+		assertTrue(testTree.checkForObject(integerList[1]));
+		assertTrue(testTree.checkForObject(integerList[2]));
+		assertTrue(testTree.checkForObject(integerList[3]));
+		assertTrue(testTree.checkForObject(integerList[4]));
+		assertTrue(testTree.checkForObject(integerList[5]));
+		assertTrue(testTree.checkForObject(integerList[6]));
+		assertTrue(testTree.checkForObject(integerList[7]));
+
+	}
+
 	private boolean isNodeCleaned(AVLNode someNode) {
 		boolean nodeClean = true;
 		if (someNode.getObject() != null) {
