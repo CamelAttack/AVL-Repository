@@ -2,6 +2,9 @@ package refined;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -263,6 +266,103 @@ class AVLTreeTest {
 		assertTrue(testTree.checkForObject(integerList[6]));
 		assertTrue(testTree.checkForObject(integerList[7]));
 
+	}
+
+	@Test
+	void testComplexTest() {
+		// Check General Tree Health on a larger tree
+		int numberOfElements = 2500;
+		ArrayList<Integer> integerList = buildRandomIntegerList(numberOfElements);
+		AVLTree<Integer> randomTree = buildRandomTree(integerList);
+		assertEquals(integerList.size(), randomTree.getNodeCount());
+		assertEquals(integerList.size(), randomTree.deepNodeCountCheck());
+		assertTrue(checkForEachElement(randomTree, integerList));
+		assertTrue(checkTreeBalance(randomTree));
+		// Delete a single element; Check tree size and that the element is no longer in
+		// the tree
+		Integer someInteger = integerList.remove(numberOfElements - 1);
+		randomTree.deleteObject(someInteger);
+		numberOfElements--;
+		assertFalse(randomTree.checkForObject(someInteger));
+		assertEquals(integerList.size(), randomTree.getNodeCount());
+		assertEquals(integerList.size(), randomTree.deepNodeCountCheck());
+		// Delete Multiple Elements; Perform another comprehensive health check of the
+		// tree
+		for (int i = 0; i < 25; i++) {
+			someInteger = integerList.remove(numberOfElements - 1);
+			randomTree.deleteObject(someInteger);
+			numberOfElements--;
+			assertFalse(randomTree.checkForObject(someInteger));
+			assertEquals(integerList.size(), randomTree.getNodeCount());
+		}
+		assertTrue(checkForEachElement(randomTree, integerList));
+		assertEquals(integerList.size(), randomTree.deepNodeCountCheck());
+		assertTrue(checkTreeBalance(randomTree));
+	}
+
+	private boolean checkForEachElement(AVLTree<Integer> someTree, ArrayList<Integer> someList) {
+		for (Integer i : someList) {
+			if (someTree.checkForObject(i) == false)
+				return false;
+		}
+		return true;
+	}
+
+	private boolean checkTreeBalance(AVLTree<Integer> someTree) {
+		boolean treeIsBalanced = true;
+		ArrayDeque<AVLNode<Integer>> nodeList = new ArrayDeque<AVLNode<Integer>>();
+		nodeList.push(someTree.getTreeRoot());
+		while (treeIsBalanced && nodeList.isEmpty() == false) {
+			AVLNode<Integer> someNode = nodeList.pop();
+			if (!someNode.isLeftEmpty())
+				nodeList.add(someNode.getLeftChildNode());
+			if (!someNode.isRightEmpty())
+				nodeList.add(someNode.getRightChildNode());
+			if (someNode.calculateBalance() > 1) {
+				treeIsBalanced = false;
+			}
+		}
+		return treeIsBalanced;
+	}
+
+	private ArrayList<Integer> buildRandomIntegerList(int numberOfElements) {
+		ArrayList<Integer> integerList = new ArrayList<Integer>();
+		boolean numberKey[] = new boolean[10001];
+
+		for (int j = 0; j < 10001; j++) {
+			numberKey[j] = false;
+		}
+
+		for (int i = 0; i < numberOfElements; i++) {
+			boolean uniqueValue = false;
+			while (uniqueValue == false) {
+				int someValue = getRandomWithRange(10000, 1);
+				if (numberKey[someValue] == false) {
+					numberKey[someValue] = true;
+					integerList.add(buildInteger(someValue));
+					uniqueValue = true;
+				}
+			}
+		}
+
+		return integerList;
+	}
+
+	private static Integer buildInteger(int someNumber) {
+		return new Integer(someNumber);
+	}
+
+	private static int getRandomWithRange(int max, int min) {
+		int range = (max - min) - 1;
+		return (int) (Math.random() * range) + min;
+	}
+
+	private AVLTree<Integer> buildRandomTree(ArrayList<Integer> integerArray) {
+		AVLTree<Integer> randomTree = new AVLTree<Integer>();
+		for (Integer i : integerArray) {
+			randomTree.insertObject(i);
+		}
+		return randomTree;
 	}
 
 	private boolean isNodeCleaned(AVLNode someNode) {
